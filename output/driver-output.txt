@@ -1,0 +1,126 @@
+HW11 - State and Chain of Responsibility
+Chain: Coke -> Pepsi -> Cheetos -> Doritos -> KitKat -> Snickers
+Initial state: Idle
+Snack inventory:
+  Coke     $1.50  quantity: 2
+  Pepsi    $1.75  quantity: 2
+  Cheetos  $1.25  quantity: 2
+  Doritos  $1.50  quantity: 2
+  KitKat   $1.25  quantity: 2
+  Snickers $1.50  quantity: 1
+
+--- 1. Coke with exact payment ---
+Selected Coke; price $1.50.
+State: Idle -> Waiting for Money
+Inserted $1.50; total $1.50.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Coke.
+Dispensed Coke. Quantity remaining: 1.
+State: Dispensing Snack -> Idle
+
+--- 2. Pepsi with insufficient money, then a second payment ---
+Selected Pepsi; price $1.75.
+State: Idle -> Waiting for Money
+Inserted $1.00; total $1.00.
+Insufficient money. Please insert $0.75 more.
+Insufficient money. Please insert $0.75 more.
+Complete or cancel the current selection before selecting another snack.
+Inserted $0.75; total $1.75.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Pepsi.
+Pepsi handler checking Pepsi.
+Dispensed Pepsi. Quantity remaining: 1.
+State: Dispensing Snack -> Idle
+
+--- 3. Cheetos with overpayment and change ---
+Selected Cheetos; price $1.25.
+State: Idle -> Waiting for Money
+Inserted $2.00; total $2.00.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Cheetos.
+Pepsi handler checking Cheetos.
+Cheetos handler checking Cheetos.
+Dispensed Cheetos. Quantity remaining: 1.
+Change returned: $0.75.
+State: Dispensing Snack -> Idle
+
+--- 4. Doritos with exact payment ---
+Selected Doritos; price $1.50.
+State: Idle -> Waiting for Money
+Inserted $1.50; total $1.50.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Doritos.
+Pepsi handler checking Doritos.
+Cheetos handler checking Doritos.
+Doritos handler checking Doritos.
+Dispensed Doritos. Quantity remaining: 1.
+State: Dispensing Snack -> Idle
+
+--- 5. Cancel a partial KitKat payment, then purchase KitKat ---
+Selected KitKat; price $1.25.
+State: Idle -> Waiting for Money
+Inserted $0.50; total $0.50.
+Insufficient money. Please insert $0.75 more.
+Transaction cancelled.
+Money refunded: $0.50.
+State: Waiting for Money -> Idle
+Selected KitKat; price $1.25.
+State: Idle -> Waiting for Money
+Inserted $1.25; total $1.25.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking KitKat.
+Pepsi handler checking KitKat.
+Cheetos handler checking KitKat.
+Doritos handler checking KitKat.
+KitKat handler checking KitKat.
+Dispensed KitKat. Quantity remaining: 1.
+State: Dispensing Snack -> Idle
+
+--- 6. Purchase the last Snickers: quantity reaches 0 ---
+Selected Snickers; price $1.50.
+State: Idle -> Waiting for Money
+Inserted $1.50; total $1.50.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Snickers.
+Pepsi handler checking Snickers.
+Cheetos handler checking Snickers.
+Doritos handler checking Snickers.
+KitKat handler checking Snickers.
+Snickers handler checking Snickers.
+Dispensed Snickers. Quantity remaining: 0.
+State: Dispensing Snack -> Idle
+
+--- 7. Try sold-out Snickers: refund the entire payment ---
+Selected Snickers; price $1.50.
+State: Idle -> Waiting for Money
+Inserted $2.00; total $2.00.
+State: Waiting for Money -> Dispensing Snack
+Coke handler checking Snickers.
+Pepsi handler checking Snickers.
+Cheetos handler checking Snickers.
+Doritos handler checking Snickers.
+KitKat handler checking Snickers.
+Snickers handler checking Snickers.
+Snickers is sold out. No snack dispensed.
+Money refunded: $2.00.
+State: Dispensing Snack -> Idle
+
+--- 8. Reject invalid actions without changing inventory ---
+Unknown snack: Pretzels. Please select an available snack name.
+Select a snack first. Returning $1.00.
+Select a snack and insert enough money first.
+Selected Coke; price $1.50.
+State: Idle -> Waiting for Money
+Insert a positive amount of money.
+Money must be in whole cents. Payment rejected.
+Transaction cancelled.
+State: Waiting for Money -> Idle
+
+Snack inventory:
+  Coke     $1.50  quantity: 1
+  Pepsi    $1.75  quantity: 1
+  Cheetos  $1.25  quantity: 1
+  Doritos  $1.50  quantity: 1
+  KitKat   $1.25  quantity: 1
+  Snickers $1.50  quantity: 0
+All driver checks passed.
